@@ -14,21 +14,12 @@ import java.io.IOException;
 import java.util.List;
 
 public class GalleryApplication extends Application {
+    private GalleryPane galleryPane;
     @Override
     public void start(Stage stage) throws IOException {
-        stage.setTitle("Галерея изображений!");
-        TilePane tilePane = new TilePane();
-        ImageLoader imageLoader = new ImageLoader("src/main/resources/assets");
-        List<File> fileList = imageLoader.loadImages();
-        if(fileList!= null){
-            for(File file : fileList){
-                Image image = new Image("file:"+file.getAbsolutePath(), 100, 100, false, true);
-                ImageView imageView = new ImageView(image);
-                imageView.setPreserveRatio(true);
-                tilePane.getChildren().add(imageView);
-            }
-        }
-        Scene scene = new Scene(tilePane, 800, 600);
+        stage.setTitle("Галерея изображений");
+        galleryPane = new GalleryPane();
+        Scene scene = new Scene(galleryPane, 800, 600);
         stage.setScene(scene);
         stage.show();
     }
