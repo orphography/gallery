@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GalleryPane  extends TilePane {
     private List<File> imageFiles;
@@ -26,7 +27,7 @@ public class GalleryPane  extends TilePane {
     public final void displayImages(List<File> images) {
         getChildren().clear();
         for (File file : images) {
-            Image image = new Image("file:" + file.getAbsolutePath(), 80, 80, false, true);
+            Image image = new Image("file:" + file.getAbsolutePath(), 180, 180, false, true);
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(image.getWidth());
             imageView.setFitHeight(image.getHeight());
@@ -49,5 +50,12 @@ public class GalleryPane  extends TilePane {
     }
     public HBox createPaginationControls() {
         return pagination.createPaginationControls();
+    }
+    public void filterImages(String query) {
+        List<File> filteredImages = imageFiles.stream()
+                .filter(file -> file.getName().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
+        pagination = new Pagination(this, filteredImages, 10);
+        pagination.updateGallery();
     }
 }

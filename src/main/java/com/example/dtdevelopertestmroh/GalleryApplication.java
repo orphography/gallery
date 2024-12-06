@@ -3,9 +3,11 @@ package com.example.dtdevelopertestmroh;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
@@ -20,6 +22,14 @@ public class GalleryApplication extends Application {
         stage.setTitle("Галерея изображений");
         BorderPane borderPane = new BorderPane();
         galleryPane = new GalleryPane();
+        HBox topPanel = new HBox(2);
+        TextField searchField = new TextField();
+        searchField.setPromptText("Поиск изображений");
+        searchField.textProperty().addListener((ov, oldV, newV) -> {
+            galleryPane.filterImages(newV);
+        });
+        topPanel.getChildren().add(searchField);
+        borderPane.setTop(topPanel);
         borderPane.setCenter(galleryPane);
         borderPane.setBottom(galleryPane.createPaginationControls());
 
