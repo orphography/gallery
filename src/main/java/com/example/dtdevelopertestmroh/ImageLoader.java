@@ -14,7 +14,7 @@ public class ImageLoader {
         }
     }
 
-    public List<File> loadImages() {
+    public final List<File> loadImages() {
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".jpg") || name.endsWith(".png") || name.endsWith(".jpeg"));
         List<File> imageFiles = new ArrayList<>();
         if (files != null) {

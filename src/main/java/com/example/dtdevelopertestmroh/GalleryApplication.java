@@ -18,8 +18,12 @@ public class GalleryApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         stage.setTitle("Галерея изображений");
+        BorderPane borderPane = new BorderPane();
         galleryPane = new GalleryPane();
-        Scene scene = new Scene(galleryPane, 800, 600);
+        borderPane.setCenter(galleryPane);
+        borderPane.setBottom(galleryPane.createPaginationControls());
+
+        Scene scene = new Scene(borderPane, 800, 600);
         stage.setScene(scene);
         stage.show();
     }

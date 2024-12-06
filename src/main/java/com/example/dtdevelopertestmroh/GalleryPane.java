@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
@@ -14,19 +15,21 @@ import java.util.List;
 public class GalleryPane  extends TilePane {
     private List<File> imageFiles;
     private ImageLoader imageLoader;
+    private Pagination pagination;
     public GalleryPane() {
         imageLoader = new ImageLoader("src/main/resources/assets");
         imageFiles = imageLoader.loadImages();
-        displayImages(imageFiles);
+        pagination = new Pagination(this, imageFiles, 10);
+        pagination.updateGallery();
     }
 
-    public void displayImages(List<File> images) {
+    public final void displayImages(List<File> images) {
         getChildren().clear();
         for (File file : images) {
-            Image image = new Image("file:" + file.getAbsolutePath(), 70, 70, false, true);
+            Image image = new Image("file:" + file.getAbsolutePath(), 80, 80, false, true);
             ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(70);
-            imageView.setFitHeight(70);
+            imageView.setFitWidth(image.getWidth());
+            imageView.setFitHeight(image.getHeight());
             imageView.setPreserveRatio(true);
             imageView.setOnMouseClicked(event -> showImage(file));
             getChildren().add(imageView);
@@ -39,9 +42,12 @@ public class GalleryPane  extends TilePane {
         imageView.setPreserveRatio(true);
 
         StackPane pane = new StackPane(imageView);
-        Scene scene = new Scene(pane, image.getWidth(), image.getHeight());
+        Scene scene = new Scene(pane, 800, 600);
         stage.setScene(scene);
         stage.setTitle(file.getName());
         stage.show();
+    }
+    public HBox createPaginationControls() {
+        return pagination.createPaginationControls();
     }
 }
