@@ -1,9 +1,12 @@
 package com.example.dtdevelopertestmroh;
 
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.List;
@@ -25,7 +28,20 @@ public class GalleryPane  extends TilePane {
             imageView.setFitWidth(70);
             imageView.setFitHeight(70);
             imageView.setPreserveRatio(true);
+            imageView.setOnMouseClicked(event -> showImage(file));
             getChildren().add(imageView);
         }
+    }
+    private void showImage(File file) {
+        Stage stage = new Stage();
+        Image image = new Image("file:" + file.getAbsolutePath());
+        ImageView imageView = new ImageView(image);
+        imageView.setPreserveRatio(true);
+
+        StackPane pane = new StackPane(imageView);
+        Scene scene = new Scene(pane, image.getWidth(), image.getHeight());
+        stage.setScene(scene);
+        stage.setTitle(file.getName());
+        stage.show();
     }
 }
