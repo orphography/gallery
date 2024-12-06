@@ -8,20 +8,20 @@ import java.io.File;
 import java.util.List;
 
 public class Pagination {
-    private final GalleryPane galleryPane;
+    private final GalleryPanel galleryPanel;
     private final List<File> images;
     private final int imagesOnPage;
     private int currentPage;
-    public Pagination(GalleryPane galleryPane, List<File> images, int imagesOnPage) {
-        this.galleryPane = galleryPane;
+    public Pagination(GalleryPanel galleryPanel, List<File> images, int imagesOnPage) {
+        this.galleryPanel = galleryPanel;
         this.images = images;
         this.imagesOnPage = imagesOnPage;
         this.currentPage = 0;
     }
     public HBox createPaginationControls() {
         HBox paginationControls = new HBox(1);
-        Button previousButton = new Button("Предыдущая");
-        Button nextButton = new Button("Следующая");
+        Button previousButton = new Button("Назад");
+        Button nextButton = new Button("Вперед");
 
         previousButton.setOnAction(event -> {
             if (currentPage > 0) {
@@ -47,6 +47,6 @@ public class Pagination {
         int startIndex = currentPage * imagesOnPage;
         int endIndex = Math.min(startIndex + imagesOnPage, images.size());
         List<File> subbedList = images.subList(startIndex, endIndex);
-        galleryPane.displayImages(subbedList);
+        galleryPanel.displayImages(subbedList);
     }
 }
