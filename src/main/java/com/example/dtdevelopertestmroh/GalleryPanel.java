@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,9 @@ public class GalleryPanel extends TilePane {
     private List<File> imageFiles;
     private ImageLoader imageLoader;
     private Pagination pagination;
-    private int imagesOnPage = 10;
+    private int imagesOnPage = 35;
+    private boolean isSortedByName = false;
+    private boolean isSortedByDate = false;
     public GalleryPanel() {
         imageLoader = new ImageLoader(PARENT_PATH);
         imageFiles = imageLoader.loadImages();
@@ -31,12 +34,13 @@ public class GalleryPanel extends TilePane {
     public final void displayImages(List<File> images) {
         getChildren().clear();
         for (File file : images) {
-            Image image = new Image("file:" + file.getAbsolutePath(), 100, 100, false, true);
+            Image image = new Image("file:" + file.getAbsolutePath(), 70, 70, false, true);
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(image.getWidth());
             imageView.setFitHeight(image.getHeight());
             imageView.setPreserveRatio(true);
             imageView.setOnMouseClicked(event -> showImage(file));
+
             getChildren().add(imageView);
         }
     }
@@ -97,6 +101,39 @@ public class GalleryPanel extends TilePane {
         file.delete();
         imageFiles.remove(file);
         pagination.updateGallery();
+    }
+    public void sortByName(){
+        if(isSortedByName){
+            imageFiles.sort((file1, file2) -> file1.getName().compareToIgnoreCase(file2.getName()));
+        }
+        else
+        {
+            imageFiles.sort((file1, file2) -> file2.getName().compareToIgnoreCase(file1.getName()));
+        }
+        isSortedByName = !isSortedByName;
+        pagination = new Pagination(this, imageFiles, imagesOnPage);
+        pagination.updateGallery();
+    }
+    public void sortByDate(){
+        if(isSortedByDate){
+            imageFiles.sort((file1, file2) -> Long.compare(getCreationTimeImage(file1), getCreationTimeImage(file2)));
+        }
+        else
+        {
+            imageFiles.sort((file1, file2) -> Long.compare(getCreationTimeImage(file2), getCreationTimeImage(file1)));
+        }
+        isSortedByDate = !isSortedByDate;
+        pagination = new Pagination(this, imageFiles, imagesOnPage);
+        pagination.updateGallery();
+    }
+    private Long getCreationTimeImage(File file){
+        try {
+            FileTime creationTime = (FileTime) Files.getAttribute(file.toPath(), "creationTime");
+            return creationTime.toMillis();
+        } catch (IOException ex) {
+            showErrorDialog(ex.getMessage());
+            return 0L;
+        }
     }
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

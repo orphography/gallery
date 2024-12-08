@@ -19,6 +19,8 @@ public class GalleryApplication extends javafx.application.Application {
 
         BorderPane borderPane = new BorderPane();
         galleryPanel = new GalleryPanel();
+        galleryPanel.setPrefTileWidth(80);
+        galleryPanel.setPrefTileHeight(80);
         HBox topPanel = new HBox(2);
 
         TextField searchField = new TextField();
@@ -37,13 +39,20 @@ public class GalleryApplication extends javafx.application.Application {
             }
         });
 
-        topPanel.getChildren().addAll(searchField, loadButton);
+        Button sortByName = new Button("Сортировать по имени");
+        sortByName.setOnAction(event -> galleryPanel.sortByName());
+
+        Button sortByDate = new Button("Сортировать по дате");
+        sortByDate.setOnAction(event -> galleryPanel.sortByDate());
+
+        topPanel.getChildren().addAll(searchField, loadButton, sortByName, sortByDate);
         borderPane.setTop(topPanel);
         borderPane.setCenter(galleryPanel);
         borderPane.setBottom(galleryPanel.createPaginationControls());
 
-        Scene scene = new Scene(borderPane, 800, 600);
+        Scene scene = new Scene(borderPane);
         stage.setScene(scene);
+        stage.sizeToScene();
         stage.show();
     }
 
