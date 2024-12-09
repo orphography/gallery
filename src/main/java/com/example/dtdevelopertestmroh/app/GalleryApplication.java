@@ -1,9 +1,9 @@
-package com.example.dtdevelopertestmroh;
+package com.example.dtdevelopertestmroh.app;
 
+import com.example.dtdevelopertestmroh.panels.GalleryPanel;
+import com.example.dtdevelopertestmroh.panels.TopPanel;
 import javafx.scene.Scene;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.io.IOException;
 

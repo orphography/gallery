@@ -8,6 +8,12 @@ module com.example.dtdevelopertestmroh {
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
 
-    opens com.example.dtdevelopertestmroh to javafx.fxml;
-    exports com.example.dtdevelopertestmroh;
+    exports com.example.dtdevelopertestmroh.app;
+    opens com.example.dtdevelopertestmroh.app to javafx.fxml;
+
+    exports com.example.dtdevelopertestmroh.panels;
+    opens com.example.dtdevelopertestmroh.panels to javafx.fxml;
+
+    exports com.example.dtdevelopertestmroh.utils;
+    opens com.example.dtdevelopertestmroh.utils to javafx.fxml;
 }

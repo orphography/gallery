@@ -1,5 +1,6 @@
-package com.example.dtdevelopertestmroh;
+package com.example.dtdevelopertestmroh.utils;
 
+import com.example.dtdevelopertestmroh.panels.GalleryPanel;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;

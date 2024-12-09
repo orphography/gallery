@@ -1,5 +1,7 @@
-package com.example.dtdevelopertestmroh;
+package com.example.dtdevelopertestmroh.panels;
 
+import com.example.dtdevelopertestmroh.utils.ImageManager;
+import com.example.dtdevelopertestmroh.utils.Pagination;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.Event;
