@@ -1,9 +1,14 @@
 package com.example.dtdevelopertestmroh;
 
+import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -14,27 +19,48 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GalleryPanel extends TilePane {
     private static final String PARENT_PATH = "src/main/resources/assets/";
-    private List<File> imageFiles;
-    private ImageLoader imageLoader;
+    private List<File> imageFiles = new ArrayList<>();
+    private final ImageLoader imageLoader;
     private Pagination pagination;
     private int imagesOnPage = 35;
-    private boolean isSortedByName = false;
-    private boolean isSortedByDate = false;
+    private EventHandler<Event> onImagesLoaded;
     public GalleryPanel() {
         imageLoader = new ImageLoader(PARENT_PATH);
-        imageFiles = imageLoader.loadImages();
-        pagination = new Pagination(this, imageFiles, imagesOnPage);
-        pagination.updateGallery();
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        getChildren().add(progressIndicator);
+
+        var loadTask = imageLoader.loadImagesAsync();
+
+        loadTask.setOnSucceeded(event -> {
+            imageFiles = loadTask.getValue();
+            pagination = new Pagination(this, imageFiles, imagesOnPage);
+            pagination.updateGallery();
+            getChildren().remove(progressIndicator);
+            if(onImagesLoaded !=null){
+                onImagesLoaded.handle(null);
+            }
+        });
+
+        loadTask.setOnFailed(event -> {
+            Platform.runLater(() -> System.err.println("Ошибка загрузки" + loadTask.getException()));
+        });
+
+        new Thread(loadTask).start();
+    }
+    public void setOnImagesLoaded(EventHandler<Event> onImagesLoaded){
+        this.onImagesLoaded = onImagesLoaded;
     }
     public final void displayImages(List<File> images) {
+        if(images == null) return;
         getChildren().clear();
         for (File file : images) {
-            Image image = new Image("file:" + file.getAbsolutePath(), 70, 70, false, true);
+            Image image = new Image("file:" + file.getAbsolutePath(), 65, 65, false, true, true);
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(image.getWidth());
             imageView.setFitHeight(image.getHeight());
@@ -74,9 +100,13 @@ public class GalleryPanel extends TilePane {
     }
 
     public HBox createPaginationControls() {
+        if(pagination == null){
+            showErrorDialog("Ошгибка");
+        }
         return pagination.createPaginationControls();
     }
     public void filterImages(String query) {
+        if(imageFiles == null || pagination == null) return;
         List<File> filteredImages = imageFiles.stream()
                 .filter(file -> file.getName().toLowerCase().contains(query.toLowerCase()))
                 .collect(Collectors.toList());
@@ -98,11 +128,15 @@ public class GalleryPanel extends TilePane {
         }
     }
     private void deleteImage(File file){
-        file.delete();
-        imageFiles.remove(file);
-        pagination.updateGallery();
+        if(file.delete()){
+            imageFiles.remove(file);
+            pagination.updateGallery();
+        }
+        else {
+            showErrorDialog("Не удалось удалить файл: " + file.getName());
+        }
     }
-    public void sortByName(){
+    public void sortByName(boolean isSortedByName){
         if(isSortedByName){
             imageFiles.sort((file1, file2) -> file1.getName().compareToIgnoreCase(file2.getName()));
         }
@@ -110,11 +144,10 @@ public class GalleryPanel extends TilePane {
         {
             imageFiles.sort((file1, file2) -> file2.getName().compareToIgnoreCase(file1.getName()));
         }
-        isSortedByName = !isSortedByName;
         pagination = new Pagination(this, imageFiles, imagesOnPage);
         pagination.updateGallery();
     }
-    public void sortByDate(){
+    public void sortByDate(boolean isSortedByDate){
         if(isSortedByDate){
             imageFiles.sort((file1, file2) -> Long.compare(getCreationTimeImage(file1), getCreationTimeImage(file2)));
         }
@@ -122,7 +155,6 @@ public class GalleryPanel extends TilePane {
         {
             imageFiles.sort((file1, file2) -> Long.compare(getCreationTimeImage(file2), getCreationTimeImage(file1)));
         }
-        isSortedByDate = !isSortedByDate;
         pagination = new Pagination(this, imageFiles, imagesOnPage);
         pagination.updateGallery();
     }
