@@ -4,14 +4,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
 import java.io.File;
 
 public class TopPanel extends HBox {
     private boolean isSortedByName = false;
     private boolean isSortedByDate = false;
-    public TopPanel(Stage stage, GalleryPanel galleryPanel) {
+    public TopPanel(GalleryPanel galleryPanel) {
 
         TextField searchField = new TextField();
         searchField.setPromptText("Поиск изображений");
@@ -21,7 +19,7 @@ public class TopPanel extends HBox {
         loadButton.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.png", "*.jpeg"));
-            File file = fileChooser.showOpenDialog(new Stage());
+            File file = fileChooser.showOpenDialog(loadButton.getScene().getWindow());
             if (file != null) {
                 galleryPanel.saveImage(file);
             }

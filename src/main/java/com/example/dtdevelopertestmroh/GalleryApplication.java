@@ -1,15 +1,10 @@
 package com.example.dtdevelopertestmroh;
 
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.io.File;
 import java.io.IOException;
 
 public class GalleryApplication extends javafx.application.Application {
@@ -21,15 +16,14 @@ public class GalleryApplication extends javafx.application.Application {
         galleryPanel = new GalleryPanel();
         galleryPanel.setPrefTileWidth(85);
         galleryPanel.setPrefTileHeight(85);
-
+        galleryPanel.setStyle("-fx-background-color: #ADD8E6;");
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(new TopPanel(stage, galleryPanel));
+        borderPane.setTop(new TopPanel(galleryPanel));
 
         galleryPanel.setOnImagesLoaded(event -> {
             borderPane.setCenter(galleryPanel);
             borderPane.setBottom(galleryPanel.createPaginationControls());
         });
-
         Scene scene = new Scene(borderPane, 595, 480);
         stage.setScene(scene);
         stage.setResizable(false);
